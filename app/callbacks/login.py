@@ -2,7 +2,6 @@ from app.sessionManager import SessionManager
 from sqlalchemy.orm import Session
 from app.models import User
 import ormsgpack
-import json
 import bcrypt
 import pika
 
@@ -31,11 +30,12 @@ def login_callback(ch, method, props, body, session: Session, session_manager: S
             complete = True
             continue
         else:
-            session = session_manager.create_session(user.id, None)
+            session = session_manager.create_session(user.id, user.oid, None)
             response = {
                 "state": "VALID",
                 "login": {
-                    "session": session.session_id
+                    "session": session.session_id,
+                    "expiry": session.session_expiry
                 }
             }
             complete = True

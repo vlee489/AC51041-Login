@@ -1,7 +1,5 @@
 from app.sessionManager import SessionManager
 from sqlalchemy.orm import Session
-from app.models import User
-import json
 import ormsgpack
 from pika import BasicProperties
 
@@ -26,11 +24,10 @@ def session_callback(ch, method, props, body, session: Session, session_manager:
             complete = True
             continue
         else:
+
             response = {
                 "state": "VALID",
-                "session": {
-                    "session": user_session.dict
-                }
+                "session": user_session.dict
             }
             complete = True
 

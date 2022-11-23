@@ -17,16 +17,17 @@ class SessionManager:
         self.__db = redis.from_url(uri)
         self.__session_length = default_length
 
-    def create_session(self, user_id: str, subscription_id: str) -> Session:
+    def create_session(self, user_id: str, oid: str, subscription_id: str) -> Session:
         """
         Create a new login session
         :param user_id: User's ID
+        :param oid: User's OID
         :param subscription_id: Subscription ID
         :return: Session
         """
         session_id = str(uuid.uuid4())
         session_expiry = datetime.datetime.utcnow() + datetime.timedelta(seconds=self.__session_length)
-        session = Session.create(session_id, session_expiry, user_id, subscription_id)
+        session = Session.create(session_id, session_expiry, user_id, oid, subscription_id)
         self.__db.set(session_id, session.msgpack, ex=self.__session_length)
         return session
 

@@ -1,19 +1,22 @@
 """Session design"""
 from datetime import datetime
 import ormsgpack
+from typing import Optional
 
 
 class Session:
     session_id: str
     session_expiry: datetime
     user_id: str
-    subscription_id: str
+    oid: str
+    subscription_id: Optional[str]
 
     def __init__(self, session_data: dict):
         self.session_id = session_data.get("session_id")
         self.user_id = session_data.get("user_id")
         self.subscription_id = session_data.get("subscription_id")
         self.session_expiry: datetime = session_data.get("session_expiry")
+        self.oid: datetime = session_data.get("oid")
 
     @property
     def dict(self) -> dict:
@@ -22,9 +25,9 @@ class Session:
         :return:
         """
         return {
-            "session_id": self.session_id,
             "session_expiry": self.session_expiry,
             "user_id": self.user_id,
+            "oid": self.oid,
             "subscription_id": self.subscription_id
         }
 
@@ -46,12 +49,13 @@ class Session:
         return cls(ormsgpack.unpackb(msg))
 
     @classmethod
-    def create(cls, session_id: str, session_expiry: datetime, user_id: str, subscription_id: str):
+    def create(cls, session_id: str, session_expiry: datetime, user_id: str, oid: str, subscription_id: str):
         """
         Create session object
         :param session_id: session id
         :param session_expiry: session expiry
         :param user_id: user's id
+        :param oid: user's oid
         :param subscription_id: subscription id
         :return: Session
         """
@@ -59,6 +63,7 @@ class Session:
             "session_id": session_id,
             "session_expiry": session_expiry,
             "user_id": user_id,
+            "oid": oid,
             "subscription_id": subscription_id
         })
 

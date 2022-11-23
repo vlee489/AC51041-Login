@@ -7,6 +7,7 @@ from .base import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
+    oid = Column(String(128), unique=True, index=True)
     email = Column(String(50), unique=True, index=True)
     first_name = Column(String(30))
     last_name = Column(String(30))
