@@ -1,0 +1,6 @@
+SQLAlchemy
+pika
+redis
+maturin
+ormsgpack
+bcrypt
