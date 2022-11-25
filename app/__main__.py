@@ -27,6 +27,10 @@ channel.basic_consume(queue="session", on_message_callback=lambda ch, method, pr
 channel.queue_declare(queue="user")  # Declare Queue
 channel.basic_consume(queue="user", on_message_callback=lambda ch, method, properties, body:
                       user_callback(ch, method, properties, body, db_session()))
+
+channel.queue_declare(queue="logout")  # Declare Queue
+channel.basic_consume(queue="logout", on_message_callback=lambda ch, method, properties, body:
+                      logout_callback(ch, method, properties, body, session_manager))
 # Start application consumer
 channel.start_consuming()
 connection.close()

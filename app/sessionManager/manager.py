@@ -31,6 +31,17 @@ class SessionManager:
         self.__db.set(session_id, session.msgpack, ex=self.__session_length)
         return session
 
+    def remove_session(self, session_id: str) -> bool:
+        """
+        Remove session from DB
+        :param session_id: User's session ID
+        :return:
+        """
+        if self.__db.delete(session_id):
+            return True
+        else:
+            return False
+
     def retrieve_session(self, session_id: str) -> Optional[Session]:
         """
         Retrieve and active session
