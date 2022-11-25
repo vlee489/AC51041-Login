@@ -5,7 +5,7 @@ from app.sessionManager import SessionManager
 from app.functions.env import EnvVars
 import pika
 
-from app.callbacks import login_callback, session_callback
+from app.callbacks import *
 
 env_vars = EnvVars()  # Load in environment variables
 engine = create_engine(env_vars.db_uri)  # Create SQL engine
@@ -22,7 +22,11 @@ channel.basic_consume(queue="login", on_message_callback=lambda ch, method, prop
 
 channel.queue_declare(queue="session")  # Declare Queue
 channel.basic_consume(queue="session", on_message_callback=lambda ch, method, properties, body:
-                      session_callback(ch, method, properties, body, db_session(), session_manager))
+                      session_callback(ch, method, properties, body, session_manager))
+
+channel.queue_declare(queue="user")  # Declare Queue
+channel.basic_consume(queue="user", on_message_callback=lambda ch, method, properties, body:
+                      user_callback(ch, method, properties, body, db_session()))
 # Start application consumer
 channel.start_consuming()
 connection.close()

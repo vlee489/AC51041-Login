@@ -16,6 +16,17 @@ class User(Base):
 
     subscriptions = relationship("Subscription", back_populates="subscriber")
 
+    @property
+    def response(self) -> dict:
+        return {
+            "user_id": self.id,
+            "oid": self.oid,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "last_login": self.last_login
+        }
+
     def __repr__(self):
         return f"User(id={self.id!r}, email={self.email!r}, fullname={self.first_name!r} {self.last_name!r}, " \
                f"last_login={self.last_login!r})"

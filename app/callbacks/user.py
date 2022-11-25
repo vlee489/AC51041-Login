@@ -1,32 +1,28 @@
-from app.sessionManager import SessionManager
 from sqlalchemy.orm import Session
 import ormsgpack
 from pika import BasicProperties
 
+from app.models import User
 
-def session_callback(ch, method, props, body, session_manager: SessionManager):
+
+def user_callback(ch, method, props, body, session: Session):
     body: dict = ormsgpack.unpackb(body)
-    response = {"state": "INVALID"}
+    response = {"state": "INVALID", "error": "UNKNOWN"}
     complete = False
 
-    # Check if reply_to is filled, if not we'll ignore message
-    if not props.reply_to:
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        return
-
     while not complete:
-        if "session_id" not in body:
+        if "user_id" not in body:
             response["error"] = "MISSING-FIELD"
             complete = True
             continue
-        if not (user_session := session_manager.retrieve_session(body['session_id'])):
-            response["error"] = "NO-SESSION"
+        if not (user := session.query(User).where(User.id == f"{body['user_id']}").first()):
+            response["error"] = "NO-USER"
             complete = True
             continue
         else:
             response = {
                 "state": "VALID",
-                "session": user_session.dict
+                "user": user.response
             }
             complete = True
 
@@ -35,3 +31,4 @@ def session_callback(ch, method, props, body, session_manager: SessionManager):
                      properties=BasicProperties(correlation_id=props.correlation_id),
                      body=ormsgpack.packb(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
+
