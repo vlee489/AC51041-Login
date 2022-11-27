@@ -1,10 +1,10 @@
 from app.sessionManager import SessionManager
-import ormsgpack
+from app.functions.packer import pack, unpack
 from pika import BasicProperties
 
 
 def logout_callback(ch, method, props, body, session_manager: SessionManager):
-    body: dict = ormsgpack.unpackb(body)
+    body: dict = unpack(body)
     response = {"state": "INVALID", "error": "UNKNOWN"}
     complete = False
 
@@ -26,6 +26,6 @@ def logout_callback(ch, method, props, body, session_manager: SessionManager):
     ch.basic_publish(exchange='',
                      routing_key=props.reply_to,
                      properties=BasicProperties(correlation_id=props.correlation_id),
-                     body=ormsgpack.packb(response))
+                     body=pack(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
 

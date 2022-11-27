@@ -1,6 +1,6 @@
+wheel
 SQLAlchemy
 pika
 redis
-maturin
-ormsgpack
+msgpack
 bcrypt

@@ -1,13 +1,13 @@
 from app.sessionManager import SessionManager
 from sqlalchemy.orm import Session
 from app.models import User
-import ormsgpack
+from app.functions.packer import pack, unpack
 import bcrypt
 import pika
 
 
 def login_callback(ch, method, props, body, session: Session, session_manager: SessionManager):
-    body: dict = ormsgpack.unpackb(body)
+    body: dict = unpack(body)
     response = {"state": "INVALID"}
     complete = False
 
@@ -43,5 +43,5 @@ def login_callback(ch, method, props, body, session: Session, session_manager: S
     ch.basic_publish(exchange='',
                      routing_key=props.reply_to,
                      properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                     body=ormsgpack.packb(response))
+                     body=pack(response))
     ch.basic_ack(delivery_tag=method.delivery_tag)
