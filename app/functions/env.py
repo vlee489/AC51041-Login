@@ -18,5 +18,5 @@ class EnvVars:
         self.debug = self.get_with_default("DEBUG", None)
         self.redis_uri = self.get_with_default("REDIS", "redis://redis:6379")
         self.db_uri = self.get_required("DBURI")
-        self.mq_uri = self.get_with_default("MQURI", "amqp://localhost:5672")
+        self.mq_uri = self.get_with_default("MQURI", "amqp://rabbitmq:5672")
 
