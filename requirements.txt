@@ -4,3 +4,4 @@ pika
 redis
 msgpack
 bcrypt
+psycopg2-binary
