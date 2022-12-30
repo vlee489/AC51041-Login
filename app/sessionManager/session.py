@@ -1,6 +1,6 @@
 """Session design"""
 from datetime import datetime
-import ormsgpack
+from app.functions.packer import pack, unpack
 from typing import Optional
 
 
@@ -37,7 +37,7 @@ class Session:
         Get msgpack bytes
         :return: msgpack of object
         """
-        return ormsgpack.packb(self.dict, option=ormsgpack.OPT_NAIVE_UTC)
+        return pack(self.dict)
 
     @classmethod
     def msg_unpack(cls, msg: bytes):
@@ -46,7 +46,7 @@ class Session:
         :param msg:
         :return:
         """
-        return cls(ormsgpack.unpackb(msg))
+        return cls(unpack(msg))
 
     @classmethod
     def create(cls, session_id: str, session_expiry: datetime, user_id: str, oid: str, subscription_id: str):
