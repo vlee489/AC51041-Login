@@ -28,3 +28,20 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ac51041-login:latest
+
+  backend-deploy:
+    name: deploy
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to backend
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd deploy/
+            sudo docker compose pull
+            sudo docker image prune -f
+            sudo docker compose up -d
